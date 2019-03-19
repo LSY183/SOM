@@ -2,6 +2,7 @@ import numpy as np
 import math
 import matplotlib.pyplot as plt
 import copy
+
 #初始化输入层与竞争层神经元的连接权值矩阵
 def initCompetition(n , m , d):
     #随机产生0-1之间的数作为权值
@@ -65,7 +66,6 @@ def eta(t,N):
 
 #SOM算法的实现
 def do_som(dataSet , com_weight, T , N_neibor):
-
     for t in range(T-1):
         com_weight = normalize_weight(com_weight)
         for data in dataSet:
@@ -81,7 +81,7 @@ def do_som(dataSet , com_weight, T , N_neibor):
     for i in range(len(dataSet)):
         n, m = getWinner(dataSet[i], com_weight)
         key = n*M + m
-        if res.has_key(key):
+        if key in res:
             res[key].append(i)
         else:
             res[key] = []
@@ -103,16 +103,17 @@ def draw(C , dataSet):
     plt.legend(loc='upper right')
     plt.show()
         
-def loadDataSet(filename):
-    dataMat=[]
-    fr=open(filename)
+def loadDataSet(fileName):
+    dataMat = []
+    fr = open(fileName)
     for line in fr.readlines():
-        line = line.replace('"','')
-        curLine=line.strip().split('\t')
-        aa = [float(i) for i in curLine]
-        dataMat.append(aa)
+        curLine = line.strip().split(' ')
+        dataMat.append(curLine)
+    for i in range(0,len(dataMat)):
+        for j in range(99):
+            dataMat[i].append(float(dataMat[i][j]))
+        del(dataMat[i][0:99])
     return dataMat
-
 
 #SOM算法主方法
 def SOM(dataSet,com_n,com_m,T,N_neibor):
@@ -121,5 +122,6 @@ def SOM(dataSet,com_n,com_m,T,N_neibor):
     C_res = do_som(dataSet, com_weight, T, N_neibor)
     draw(C_res, dataSet)
     draw(C_res, old_dataSet)
+
 dataSet = loadDataSet("E:\桌面\机器学习\dataSet.txt")
 SOM(dataSet,2,2,4,2)
